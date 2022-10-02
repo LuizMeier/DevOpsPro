@@ -1,0 +1,44 @@
+version: '3.8'
+
+volumes:
+  mysql_vol:
+  wordpress_vol:
+
+networks:
+  wordpress_network:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0.30
+    ports:
+      - 3306:3306
+    networks:
+      - wordpress_network
+    volumes:
+      - mysql_vol:/var/lib/mysql
+    hostname: mysql
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpadmin
+      MYSQL_PASSWORD: wppwd
+      MYSQL_ROOT_PASSWORD: xablau123
+
+  wordpress:
+    image: wordpress
+    depends_on:
+      - mysql
+    ports: 
+      - 8080:80
+    networks:
+      - wordpress_network
+    volumes:
+      - wordpress_vol:/var/www/html
+    hostname: wordpress
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wpadmin
+      WORDPRESS_DB_PASSWORD: wppwd
+      WORDPRESS_DB_NAME: wordpress

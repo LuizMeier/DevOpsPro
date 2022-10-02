@@ -1,0 +1,36 @@
+version: '3.8'
+
+volumes:
+  mariadb_vol:
+
+networks:
+  mariadb_network:
+    driver: bridge
+
+services:
+  mariadb:
+    image: mariadb
+    ports:
+      - 3306:3306
+    networks:
+      - mariadb_network
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: admin
+      MARIADB_DATABASE: phpmyadmin
+      MARIADB_USER: phpmyadmin
+      MARIADB_PASSWORD: phpmyadmin
+
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - mariadb
+    ports: 
+      - 8080:80
+    networks:
+      - mariadb_network
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: phpmyadmin
+      PMA_PASSWORD: phpmyadmin

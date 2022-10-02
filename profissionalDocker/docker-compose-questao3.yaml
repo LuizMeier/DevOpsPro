@@ -1,0 +1,32 @@
+version: '3.8'
+
+volumes:
+  postgres_vol:
+
+networks:
+  postgres_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - postgres_network
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: pgadmin
+
+  pgadmin:
+    image: dpage/pgadmin4:6.13
+    depends_on:
+      - postgres
+    ports: 
+      - 8080:80
+    networks:
+      - postgres_network
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_DEFAULT_EMAIL: a@devop.com
