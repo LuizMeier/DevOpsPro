@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-taints
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-taints
+  template:
+    metadata:
+      labels:
+        app: nginx-taints
+    spec:
+      containers:
+      - name: nginx-taints
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: prioridade
+                    operator: In
+                    values:
+                      - "1"
+                      - "2"
