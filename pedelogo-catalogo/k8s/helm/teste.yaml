@@ -1,0 +1,109 @@
+NAME: minhaapi
+LAST DEPLOYED: Fri May 26 12:43:06 2023
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+api:
+  serviceType: ClusterIP
+
+COMPUTED VALUES:
+api:
+  image: lfmmeier/pedelogo-catalogo:latest
+  serviceType: ClusterIP
+mongodb:
+  credentials:
+    databaseName: admin
+    userName: mongouser
+    userPassword: mongopwd
+  tag: 4.2.8
+
+HOOKS:
+MANIFEST:
+---
+# Source: api-produto/templates/api-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minhaapi-api-service
+spec:
+  selector:
+    app: minhaapi-api
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+---
+# Source: api-produto/templates/mongo-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minhaapi-mongo-service
+spec:
+  selector:
+    app: minhaapi-mongodb
+  ports:
+    - port: 27017
+      targetPort: 27017
+---
+# Source: api-produto/templates/api-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minhaapi-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minhaapi-api
+  template:
+    metadata:
+      labels:
+        app: minhaapi-api
+    spec:
+      containers:
+        - name: api
+          image: lfmmeier/pedelogo-catalogo:latest
+          ports:
+          - containerPort: 80
+            name: http
+          - containerPort: 443
+            name: https
+          imagePullPolicy: Always
+          env:
+            - name: Mongo__User
+              value: mongouser
+            - name: Mongo__Password
+              value: mongopwd
+            - name: Mongo__Host
+              value: minhaapi-mongo-service
+            - name: Mongo__Database
+              value: admin
+---
+# Source: api-produto/templates/mongodb-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minhaapi-mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minhaapi-mongodb
+  template:
+    metadata:
+      labels:
+        app: minhaapi-mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:4.2.8
+          ports:
+          - containerPort: 27017
+        - env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: mongouser
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: mongopwd
+

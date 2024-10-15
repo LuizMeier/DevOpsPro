@@ -1,0 +1,50 @@
+version: '3.8'
+
+volumes:
+  postgres_vol:
+
+networks:
+  postgres_network:
+    driver: bridge
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - postgres_network
+    volumes:
+      - postgres_vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: pgadmin
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:6.13
+    depends_on:
+      - postgres
+    ports: 
+      - 8081:80
+    networks:
+      - postgres_network
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_DEFAULT_EMAIL: a@devop.com
+
+  kube-news:
+    container_name: kube-news
+    image: luizmeier/kube-news:v1
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    ports:
+      - 8080:8080
+    networks:
+      - postgres_network
+    environment:
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: pgadmin
+      DB_HOST: postgres

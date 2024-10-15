@@ -1,0 +1,7 @@
+[container]
+localhost
+
+[container:vars]
+ansible_ssh_private_key_file=/home/cuca/devops/ansible/.ssh/ansible
+ansible_user=root
+ansible_port=2222

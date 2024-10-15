@@ -1,0 +1,13 @@
+api:
+  image: lfmmeier/pedelogo-catalogo:latest
+  serviceType: ClusterIP
+  ingress: ["aulakubedev.com.br", "api.aulakubedev.com.br"]
+
+mongodb:
+  auth:
+    rootPassword: mongoroot
+    username: mongouser
+    password: mongopwd
+    database: produto
+  persistence:
+    enabled: false

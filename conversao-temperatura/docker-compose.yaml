@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  conversao-temperatura:
+    image: luizmeier/conversao-temperatura:v1
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    ports:
+      - 8080:8080
