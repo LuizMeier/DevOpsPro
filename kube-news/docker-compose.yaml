@@ -18,7 +18,7 @@ services:
     volumes:
       - postgres_vol:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: pgadmin
+      POSTGRES_PASSWORD: 
 
   pgadmin:
     container_name: pgadmin
@@ -45,6 +45,6 @@ services:
       - postgres_network
     environment:
       DB_DATABASE: postgres
-      DB_USERNAME: postgres
-      DB_PASSWORD: pgadmin
+      DB_USERNAME:
+      DB_PASSWORD: 
       DB_HOST: postgres
